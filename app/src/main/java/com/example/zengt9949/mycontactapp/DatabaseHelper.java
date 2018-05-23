@@ -1,5 +1,6 @@
 package com.example.zengt9949.mycontactapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,6 +13,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "Contact2018_table";
     public static final String ID = "ID";
     public static final String COLUMN_NAME_CONTACT = "contact";
+    public static final String COLUMN_ADDRESS_CONTACT = "address";
+    public static final String COLUMN_PHONE_CONTACT = "number";
+
 
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -23,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        SQLiteDatabase db = this.getWritableDatabase(); //for initial test of db creation
+        //SQLiteDatabase db = this.getWritableDatabase(); //for initial test of db creation
         Log.d("MyContactApp","Databasehelper: constructed Databasehelper");
     }
 
@@ -38,5 +42,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("MyContactApp","Databasehelper: upgrading Databasehelper");
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
+    }
+
+    public boolean insertData(String name, String address, String phone){
+        Log.d("MyContactApp", "Databasehelper: inserting data");
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(COLUMN_NAME_CONTACT, name);
+        contentValue.put(COLUMN_ADDRESS_CONTACT, address);
+        contentValue.put(COLUMN_PHONE_CONTACT, phone);
+
+        long result = db.insert(TABLE_NAME, null, contentValue);
+        if(result == -1){
+            Log.d("MyContactApp","Databasehelper: Contact insert - failed");
+            return false;
+        }
+        else {
+            Log.d("MyContactApp","Databasehelper: Contact insert - passed");
+            return true;
+        }
     }
 }
