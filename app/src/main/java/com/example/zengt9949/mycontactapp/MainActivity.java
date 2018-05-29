@@ -1,6 +1,7 @@
 package com.example.zengt9949.mycontactapp;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
         while(res.moveToNext()){
             try {
-                buffer.append(res.getString(res.getPosition()) + "\n");
-
+                for(int i = 0; i < 4 ; i ++) {
+                    buffer.append(res.getString(i) + "\n");
+                }
             }
             catch(Exception e){
 
             }
-
         }
         Log.d("MyContactApp","MainActivity: viewData: assembled stringBuffer");
         showMessage("Data", buffer.toString());
@@ -70,6 +71,32 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+
+    public static final String EXTRA_MESSAGE = "com.example.zengt9949.mycontactapp.MESSAGE";
+    public void SearchRecord(View view){
+        Log.d("MyContactApp","MainACtivity: showMessage: launching SearchActivity");
+        Cursor res = myDb.getAllData();
+        int id = 0;
+        while(res.moveToNext()){
+            try {
+                for(int i = 0; i < 4 ; i ++) {
+                    if(editName.getText().toString().equals(res.getString(i))){
+                        id = i;
+                    }
+                }
+            }
+            catch(Exception e){
+
+            }
+        }
+
+        Log.d("MyContactApp","MainACtivity: showMessage: ID found: " + id);
+        Intent intent = new Intent(this, SearchActivity.class);
+        Log.d("MyContactApp","MainACtivity: showMessage: intent instantiated");
+        intent.putExtra(EXTRA_MESSAGE, res.getString(id));
+        Log.d("MyContactApp","MainACtivity: showMessage: intent putExtra complete");
+        startActivity(intent);
     }
 
 }

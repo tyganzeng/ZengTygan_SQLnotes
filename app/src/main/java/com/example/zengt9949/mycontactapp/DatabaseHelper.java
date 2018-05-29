@@ -9,9 +9,9 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 2;
-    public static final String DATABASE_NAME = "Contact2018.db";
-    public static final String TABLE_NAME = "Contact2018_table";
+    public static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "Contact2018-3.db";
+    public static final String TABLE_NAME = "Contact2018_table_2";
     public static final String ID = "ID";
     public static final String COLUMN_NAME_CONTACT = "contact";
     public static final String COLUMN_ADDRESS_CONTACT = "address";
@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     COLUMN_NAME_CONTACT + " TEXT," +
-                    COLUMN_ADDRESS_CONTACT + " TEXT, "+
+                    COLUMN_ADDRESS_CONTACT + " TEXT,"+
                     COLUMN_PHONE_CONTACT + " TEXT)";
 
     public static final String SQL_DELETE_ENTRIES =
@@ -36,7 +36,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("MyContactApp","Databasehelper: creating Databasehelper");
-        db.delete(TABLE_NAME,null,null);
         db.execSQL(SQL_CREATE_ENTRIES);
     }
 
@@ -50,12 +49,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean insertData(String name, String address, String phone){
         Log.d("MyContactApp", "Databasehelper: inserting data");
         SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("MyContactApp", "Databasehelper: db instantiated");
         ContentValues contentValue = new ContentValues();
+        Log.d("MyContactApp", "Databasehelper: contentvalue instantiated");
         contentValue.put(COLUMN_NAME_CONTACT, name);
         contentValue.put(COLUMN_ADDRESS_CONTACT, address);
         contentValue.put(COLUMN_PHONE_CONTACT, phone);
-
         long result = db.insert(TABLE_NAME, null, contentValue);
+        Log.d("MyContactApp","Databasehelper: not crashed");
         if(result == -1){
             Log.d("MyContactApp","Databasehelper: Contact insert - failed");
             return false;
