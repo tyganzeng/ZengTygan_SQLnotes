@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+        res.moveToFirst();
+        Log.d("MyContactApp",res.getString(1));
         Log.d("MyContactApp","MainActivity: viewData: assembled stringBuffer");
         showMessage("Data", buffer.toString());
 
@@ -78,24 +80,35 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MyContactApp","MainACtivity: showMessage: launching SearchActivity");
         Cursor res = myDb.getAllData();
         int id = 0;
-        while(res.moveToNext()){
+        boolean notFound = true;
+        while(res.moveToNext() && notFound){
             try {
-                for(int i = 0; i < 4 ; i ++) {
-                    if(editName.getText().toString().equals(res.getString(i))){
-                        id = i;
-                    }
+
+                if(editName.getText().toString().equals(res.getString(1))){
+                    id = res.getPosition();
+                    Log.d("MyContactApp","Original String: " + editName.getText().toString());
+                    Log.d("MyContactApp","String has been found at " + id + " ,it is: " + res.getString(1));
+                    notFound = false;
+                } else {
+                    Log.d("MyContactApp", "Not found");
+                    Log.d("MyContactApp","Original String: " + editName.getText().toString());
+                    Log.d("MyContactApp","String has been found at " + id + " ,it is: " + res.getString(1));
                 }
             }
             catch(Exception e){
-
+                Log.d("MyContactApp","Error searching");
             }
         }
+        Log.d("MyContactApp","String search complete");
+        res.moveToPosition(id);
+        Log.d("MyContactApp","The string at " + id + " is: " + res.getString(1));
 
-        Log.d("MyContactApp","MainACtivity: showMessage: ID found: " + id);
         Intent intent = new Intent(this, SearchActivity.class);
-        Log.d("MyContactApp","MainACtivity: showMessage: intent instantiated");
-        intent.putExtra(EXTRA_MESSAGE, res.getString(id));
+        Log.d("MyContactApp","intent instantiated");
+        Log.d("MyContactApp","the found string is: " + res.getString(id));
+        intent.putExtra(EXTRA_MESSAGE, res.getString(1));
         Log.d("MyContactApp","MainACtivity: showMessage: intent putExtra complete");
+        //intent.putExtra(EXTRA_MESSAGE, res.getString(1));
         startActivity(intent);
     }
 
