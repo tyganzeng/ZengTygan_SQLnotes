@@ -47,13 +47,25 @@ public class MainActivity extends AppCompatActivity {
             showMessage("Error", "No data found in database");
         }
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer result = new StringBuffer();
 
         while(res.moveToNext()){
             try {
-                for(int i = 0; i < 4 ; i ++) {
-                    buffer.append(res.getString(i) + "\n");
+
+                for(int i = 0; i < 4; i++){
+                    switch(i){
+                        case 0: result = result.append("ID: ");
+                            break;
+                        case 1: result = result.append("NAME: ");
+                            break;
+                        case 2: result = result.append("ADDRESS: ");
+                            break;
+                        default: result = result.append("PHONE: ");
+                            break;
+                    }
+                    result = result.append(res.getString(i) + "\n");
                 }
+                result = result.append("\n");
             }
             catch(Exception e){
 
@@ -62,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         res.moveToFirst();
         Log.d("MyContactApp",res.getString(1));
         Log.d("MyContactApp","MainActivity: viewData: assembled stringBuffer");
-        showMessage("Data", buffer.toString());
+        showMessage("Data", result.toString());
 
     }
 
@@ -75,24 +87,42 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public static final String EXTRA_MESSAGE = "com.example.zengt9949.mycontactapp.MESSAGE";
+    public static final String EXTRA_MESSAGE_NAME = "com.example.zengt9949.mycontactapp.NAME";
+    public static final String EXTRA_MESSAGE_ADDRESS = "com.example.zengt9949.mycontactapp.ADDRESS";
+    public static final String EXTRA_MESSAGE_PHONE = "com.example.zengt9949.mycontactapp.PHONE";
+   // public static final String EXTRA_MESSAGE_NAME = "com.example.zengt9949.mycontactapp.NAME";
     public void SearchRecord(View view){
         Log.d("MyContactApp","MainACtivity: showMessage: launching SearchActivity");
         Cursor res = myDb.getAllData();
-        int id = 0;
-        boolean notFound = true;
-        while(res.moveToNext() && notFound){
+        //int id = 0;
+        boolean found = false;
+        StringBuffer result = new StringBuffer();
+        while(res.moveToNext()){
             try {
-
                 if(editName.getText().toString().equals(res.getString(1))){
-                    id = res.getPosition();
+                    //id = res.getPosition();
+                    for(int i = 0; i < 4; i++){
+                        switch(i){
+                            case 0: result = result.append("ID: ");
+                            break;
+                            case 1: result = result.append("NAME: ");
+                                break;
+                            case 2: result = result.append("ADDRESS: ");
+                                break;
+                            default: result = result.append("PHONE: ");
+                                break;
+                        }
+                        result = result.append(res.getString(i) + "\n");
+                    }
+                    found = true;
                     Log.d("MyContactApp","Original String: " + editName.getText().toString());
-                    Log.d("MyContactApp","String has been found at " + id + " ,it is: " + res.getString(1));
-                    notFound = false;
+                    //.d("MyContactApp","String has been found at " + id + " ,it is: " + res.getString(1));
+                    result = result.append("\n");
+
                 } else {
                     Log.d("MyContactApp", "Not found");
                     Log.d("MyContactApp","Original String: " + editName.getText().toString());
-                    Log.d("MyContactApp","String has been found at " + id + " ,it is: " + res.getString(1));
+                    //Log.d("MyContactApp","String has been found at " + id + " ,it is: " + res.getString(1));
                 }
             }
             catch(Exception e){
@@ -100,15 +130,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Log.d("MyContactApp","String search complete");
-        res.moveToPosition(id);
-        Log.d("MyContactApp","The string at " + id + " is: " + res.getString(1));
+        //res.moveToPosition(id);
+        //Log.d("MyContactApp","The string at " + id + " is: " + result);
 
         Intent intent = new Intent(this, SearchActivity.class);
         Log.d("MyContactApp","intent instantiated");
-        Log.d("MyContactApp","the found string is: " + res.getString(id));
-        intent.putExtra(EXTRA_MESSAGE, res.getString(1));
+        //Log.d("MyContactApp","the found string is: " + res.getString(id));
+        if(found){
+            intent.putExtra(EXTRA_MESSAGE_NAME, result.toString());
+        } else {
+            intent.putExtra(EXTRA_MESSAGE_NAME, "No result found.");
+        }
+        /*intent.putExtra(EXTRA_MESSAGE_NAME, res.getString(1));
+        intent.putExtra(EXTRA_MESSAGE_ADDRESS, res.getString(2));
+        intent.putExtra(EXTRA_MESSAGE_PHONE, res.getString(3));*/
         Log.d("MyContactApp","MainACtivity: showMessage: intent putExtra complete");
-        //intent.putExtra(EXTRA_MESSAGE, res.getString(1));
+
         startActivity(intent);
     }
 
